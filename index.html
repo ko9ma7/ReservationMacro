@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>예약 선택</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            flex-direction: column;
+            text-align: center;
+        }
+
+        select, button {
+            margin-top: 10px;
+            padding: 10px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <h1>예약 옵션 선택</h1>
+    <label for="reservation-option">예약할 옵션을 선택하세요:</label>
+    <select id="reservation-option">
+        <option value="시민체육광장">시민체육광장</option>
+        <option value="군포국민체육센터">군포국민체육센터</option>
+    </select>
+    <button onclick="saveSelection()">저장</button>
+
+    <script>
+        function saveSelection() {
+            let selectedOption = document.getElementById("reservation-option").value;
+            localStorage.setItem("reservation_option", selectedOption);
+        }
+    </script>
+</body>
+</html>

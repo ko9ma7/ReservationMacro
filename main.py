@@ -31,6 +31,8 @@ driver = webdriver.Chrome(service=service)
 # 창을 전체화면으로 설정
 driver.maximize_window()
 
+stadium = ""
+
 # 10시까지 대기하는 함수
 def wait_until():
     now = datetime.now()
@@ -48,6 +50,21 @@ def wait_until():
         time.sleep(wait_time)
     else:
         print("목표 시간이 이미 지나버렸습니다.")
+
+# 예약 옵션 가져오기
+def get_selected_option():
+    global stadium  # 전역 변수를 사용
+    driver.get("file:///Users/incross0915/Desktop/PrivateProject/Private/ReservationMacro/index.html")  
+
+    while True:
+        selected_option = driver.execute_script("return localStorage.getItem('reservation_option');")
+        if selected_option:
+            print(f"선택된 옵션: {selected_option}")
+            stadium = selected_option
+            return selected_option
+        else:
+            print("옵션이 선택되지 않았습니다. 다시 확인합니다...")
+            time.sleep(2)  # 2초마다 확인
 
 # 로그인 함수
 def login():
@@ -74,6 +91,8 @@ def login():
     login_button.click()
 
 def ready_for_reservation() :
+    global stadium  # 전역 변수 stadium을 사용
+
     time.sleep(3)
 
     # 페이지 열기
@@ -87,7 +106,11 @@ def ready_for_reservation() :
     # select 요소 찾기
     select_element = WebDriverWait(driver, Constants.TIMEOUT.value).until(EC.presence_of_element_located((By.ID, "center")))
     select = Select(select_element)
-    select.select_by_value("GUNPO02")  # value 속성을 사용하여 선택
+
+    if stadium == "시민체육광장":
+        select.select_by_value("GUNPO02")  # value 속성을 사용하여 선택
+    else:
+        select.select_by_value("GUNPO01")  # value 속성을 사용하여 선택
 
     # 조회 버튼 찾기 (CSS 선택자로 찾기)
     submit_button = WebDriverWait(driver, Constants.TIMEOUT.value).until(
@@ -111,7 +134,7 @@ def ready_for_reservation() :
     # 특정 날짜(td) 클릭하기 ex) 당일이 8/2일 이면 9/2일을 선택
     # 혹시 모를 일로 인하여 부득이하게 하드코딩으로 진행
     date_td = WebDriverWait(driver, Constants.TIMEOUT.value).until(
-        EC.element_to_be_clickable((By.ID, "date-20250430"))
+        EC.element_to_be_clickable((By.ID, "date-20250429"))
     )
     date_td.click()
 
@@ -176,7 +199,21 @@ def apply_for_reservation():
     if not checkbox.is_selected():
         checkbox.click()
 
-try:
+# try:
+#     get_selected_option()
+#     login()
+#     ready_for_reservation()
+#     apply_for_reservation()
+
+#     # 무한 루프를 사용하여 대기
+#     while True:
+#         time.sleep(1)  # 1초마다 반복 (CPU 사용을 줄이기 위해)
+# finally:
+#     # 드라이버 종료
+#     driver.quit()
+
+selected_option = get_selected_option()
+if selected_option:
     login()
     ready_for_reservation()
     apply_for_reservation()
@@ -184,7 +221,6 @@ try:
     # 무한 루프를 사용하여 대기
     while True:
         time.sleep(1)  # 1초마다 반복 (CPU 사용을 줄이기 위해)
-finally:
-    # 드라이버 종료
+else:
+    print("예약 옵션이 설정되지 않아 프로그램을 종료합니다.")
     driver.quit()
-
