@@ -3,6 +3,7 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select, WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import StaleElementReferenceException
 from webdriver_manager.chrome import ChromeDriverManager
 import time
 from enum import Enum, auto
@@ -73,6 +74,8 @@ def login():
     login_button.click()
 
 def ready_for_reservation() :
+    time.sleep(3)
+
     # 페이지 열기
     driver.get(Constants.RESERVATION_URL.value)
 
@@ -102,14 +105,13 @@ def ready_for_reservation() :
     submit_button.click()
 
     # '다음월' 링크 클릭하기
-    next_month_link = WebDriverWait(driver, Constants.TIMEOUT.value).until(
-        EC.element_to_be_clickable((By.ID, "next_month"))
-    )
+    next_month_link = wait_for_clickable(driver, By.ID, "next_month")
     next_month_link.click()
 
     # 특정 날짜(td) 클릭하기 ex) 당일이 8/2일 이면 9/2일을 선택
+    # 혹시 모를 일로 인하여 부득이하게 하드코딩으로 진행
     date_td = WebDriverWait(driver, Constants.TIMEOUT.value).until(
-        EC.element_to_be_clickable((By.ID, "date-20241005"))
+        EC.element_to_be_clickable((By.ID, "date-20250430"))
     )
     date_td.click()
 
@@ -127,6 +129,16 @@ def ready_for_reservation() :
             break  # 체크박스가 발견되면 루프 종료
         except:
             print("Checkbox not found, refreshing the page...")
+
+def wait_for_clickable(driver, by, value, timeout=10, retries=3):
+    for _ in range(retries):
+        try:
+            return WebDriverWait(driver, timeout).until(
+                EC.element_to_be_clickable((by, value))
+            )
+        except StaleElementReferenceException:
+            time.sleep(1)  # 1초 대기 후 다시 시도
+    raise Exception("Element not found or stale after retries.")
 
 def apply_for_reservation():
     # 페이지 로딩을 기다리기
