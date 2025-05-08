@@ -134,7 +134,7 @@ def ready_for_reservation() :
     # 특정 날짜(td) 클릭하기 ex) 당일이 8/2일 이면 9/2일을 선택
     # 혹시 모를 일로 인하여 부득이하게 하드코딩으로 진행
     date_td = WebDriverWait(driver, Constants.TIMEOUT.value).until(
-        EC.element_to_be_clickable((By.ID, "date-20250429"))
+        EC.element_to_be_clickable((By.ID, "date-20250605"))
     )
     date_td.click()
 
@@ -169,9 +169,10 @@ def apply_for_reservation():
 
     # 삼성 마을 구장 전용
     # '팀명' 입력 필드 찾기 및 값 입력 
-    # team_nm_field = driver.find_element(By.ID, "team_nm")
-    # team_nm_field.clear()  # 기존 값 지우기 (선택 사항)
-    # team_nm_field.send_keys("김민제")  # 팀명 입력하기
+    if stadium == "군포국민체육센터":
+        team_nm_field = driver.find_element(By.ID, "team_nm")
+        team_nm_field.clear()  # 기존 값 지우기 (선택 사항)
+        team_nm_field.send_keys("김민제")  # 팀명 입력하기
 
     # '인원수' 입력 필드 찾기 및 값 입력
     users_field = driver.find_element(By.ID, "users")
