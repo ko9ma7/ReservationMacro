@@ -99,9 +99,9 @@ def ready_for_reservation() :
     driver.get(Constants.RESERVATION_URL.value)
 
     # '오늘 하루 안보기' 버튼 찾기 (XPATH로 찾기)
-    today_button = WebDriverWait(driver, Constants.TIMEOUT.value).until(
-        EC.element_to_be_clickable((By.XPATH, '//button[span[text()="오늘 하루 안보기"]]')))
-    today_button.click()
+    # today_button = WebDriverWait(driver, Constants.TIMEOUT.value).until(
+    #     EC.element_to_be_clickable((By.XPATH, '//button[span[text()="오늘 하루 안보기"]]')))
+    # today_button.click()
 
     # select 요소 찾기
     select_element = WebDriverWait(driver, Constants.TIMEOUT.value).until(EC.presence_of_element_located((By.ID, "center")))
@@ -111,6 +111,17 @@ def ready_for_reservation() :
         select.select_by_value("GUNPO02")  # value 속성을 사용하여 선택
     else:
         select.select_by_value("GUNPO01")  # value 속성을 사용하여 선택
+
+        time.sleep(3)
+
+        # '시설' select 요소 찾기
+        part_select_element = WebDriverWait(driver, Constants.TIMEOUT.value).until(EC.presence_of_element_located((By.ID, "part")))
+        part_select = Select(part_select_element)
+
+        # '축구장'을 선택 (value="11")
+        part_select.select_by_value("11")
+
+    time.sleep(2)
 
     # 조회 버튼 찾기 (CSS 선택자로 찾기)
     submit_button = WebDriverWait(driver, Constants.TIMEOUT.value).until(
@@ -127,14 +138,18 @@ def ready_for_reservation() :
     # 조회 버튼 클릭하기
     submit_button.click()
 
+    time.sleep(2)  # 페이지 로딩을 기다리기
+
     # '다음월' 링크 클릭하기
     next_month_link = wait_for_clickable(driver, By.ID, "next_month")
     next_month_link.click()
 
+    time.sleep(2)
+
     # 특정 날짜(td) 클릭하기 ex) 당일이 8/2일 이면 9/2일을 선택
     # 혹시 모를 일로 인하여 부득이하게 하드코딩으로 진행
     date_td = WebDriverWait(driver, Constants.TIMEOUT.value).until(
-        EC.element_to_be_clickable((By.ID, "date-20250605"))
+        EC.element_to_be_clickable((By.ID, "date-20250704"))
     )
     date_td.click()
 
