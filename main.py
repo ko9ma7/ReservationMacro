@@ -68,8 +68,10 @@ def get_selected_option():
 
 # 로그인 함수
 def login():
-    # 페이지 열기
-    driver.get(Constants.LOGIN_URL.value)
+    login_link = WebDriverWait(driver, Constants.TIMEOUT.value).until(
+        EC.element_to_be_clickable((By.CSS_SELECTOR, 'a#process_login.login.proc_add_referer'))
+    )
+    login_link.click()
 
     # 페이지 로딩을 기다리기
     WebDriverWait(driver, Constants.TIMEOUT.value).until(EC.presence_of_element_located((By.ID, "user_id")))
@@ -97,6 +99,10 @@ def ready_for_reservation() :
 
     # 페이지 열기
     driver.get(Constants.RESERVATION_URL.value)
+
+    login()
+
+    time.sleep(3)  # 페이지 로딩을 기다리기
 
     # '오늘 하루 안보기' 버튼 찾기 (XPATH로 찾기)
     # today_button = WebDriverWait(driver, Constants.TIMEOUT.value).until(
@@ -149,7 +155,7 @@ def ready_for_reservation() :
     # 특정 날짜(td) 클릭하기 ex) 당일이 8/2일 이면 9/2일을 선택
     # 혹시 모를 일로 인하여 부득이하게 하드코딩으로 진행
     date_td = WebDriverWait(driver, Constants.TIMEOUT.value).until(
-        EC.element_to_be_clickable((By.ID, "date-20250704"))
+        EC.element_to_be_clickable((By.ID, "date-20250719"))
     )
     date_td.click()
 
@@ -230,7 +236,6 @@ def apply_for_reservation():
 
 selected_option = get_selected_option()
 if selected_option:
-    login()
     ready_for_reservation()
     apply_for_reservation()
 
