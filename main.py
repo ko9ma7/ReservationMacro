@@ -170,6 +170,12 @@ def ready_for_reservation() :
             )
             checkbox.click()
             print("Checkbox clicked successfully!")
+
+            # '대관신청' 버튼 클릭
+            apply_button = WebDriverWait(driver, 1).until(
+                EC.element_to_be_clickable((By.CSS_SELECTOR, 'button.action_application'))
+            )
+            apply_button.click()
             break  # 체크박스가 발견되면 루프 종료
         except:
             print("Checkbox not found, refreshing the page...")
